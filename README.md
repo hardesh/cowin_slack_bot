@@ -1,6 +1,8 @@
 # COWIN Slack Bot
 
-
+## TODO:
+- Remove hardcoded values. Add arg parser
+- Add OTP generation based based on input from slack bot
 
 ### References:
 - [Python Requests Library](https://pypi.org/project/requests/)
