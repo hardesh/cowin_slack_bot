@@ -72,41 +72,46 @@ if __name__ == "__main__":
         sys.exit()
 
     appoint_payload = {"district_id": str(district_id), "date": start_date}
-    get_appointments = requests.get(
-        "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict",
-        params=appoint_payload,
-    )
-    centers_list = get_appointments.json()["centers"]
 
-    available_centers = []
-    for center in centers_list:
-        if (
-            center["sessions"][0]["min_age_limit"] < 45
-            and center["pincode"] in pincode_list
-        ):
-            available_centers.append(center)
-    # print("available_centers: ", available_centers)
+    while 1:
+    	print("in loop")
+    	get_appointments = requests.get(
+    	    "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict",
+    	    params=appoint_payload,
+    	)
+    	centers_list = get_appointments.json()["centers"]
 
-    message_list = []
-    message_str = ""
-    for center in available_centers:
-        for session in center["sessions"]:
-            message_str = (
-                "Center Name: "
-                + center["name"]
-                + "\nPincode: "
-                + str(center["pincode"])
-                + "\nAvailable Capacity: "
-                + str(session["available_capacity"])
-                + "\nDate: "
-                + session["date"]
-                + "\nVaccine: "
-                + session["vaccine"]
-            )
-            message_list.append(message_str)
+    	available_centers = []
+    	for center in centers_list:
+    	    if (
+    	        center["sessions"][0]["min_age_limit"] < 45
+    	        and center["pincode"] in pincode_list
+    	    ):
+    	        available_centers.append(center)
+    	# print("available_centers: ", available_centers)
 
-    for message in message_list:
-        try:
-            response = client.chat_postMessage(channel="#cowin", text=message)
-        except SlackApiError as e:
-            print(f"Got an error: {e.response['error']}")
+    	message_list = []
+    	message_str = ""
+    	for center in available_centers:
+    	    for session in center["sessions"]:
+    	        message_str = (
+    	            "Center Name: "
+    	            + center["name"]
+    	            + "\nPincode: "
+    	            + str(center["pincode"])
+    	            + "\nAvailable Capacity: "
+    	            + str(session["available_capacity"])
+    	            + "\nDate: "
+    	            + session["date"]
+    	            + "\nVaccine: "
+    	            + session["vaccine"]
+    	        )
+    	        message_list.append(message_str)
+
+    	for message in message_list:
+    	    try:
+    	        response = client.chat_postMessage(channel="#cowin", text=message)
+    	    except SlackApiError as e:
+    	        print(f"Got an error: {e.response['error']}")
+
+    	time.sleep(60)
